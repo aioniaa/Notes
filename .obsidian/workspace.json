@@ -1,0 +1,184 @@
+{
+  "main": {
+    "id": "d256ea8c38fb24ba",
+    "type": "split",
+    "children": [
+      {
+        "id": "f6dff1bad941ae45",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "185f7a3c0e4c13c9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "JDBC/JDBC.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "JDBC"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "918c10e4b6a970c9",
+    "type": "split",
+    "children": [
+      {
+        "id": "970f4c9b12170684",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d7a380fa1ef792d7",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "69a210d51cdab7af",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "9e017152f87211a3",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 303.51190185546875,
+    "collapsed": true
+  },
+  "right": {
+    "id": "5aa858c4bf3bedf0",
+    "type": "split",
+    "children": [
+      {
+        "id": "212cf78bf05a6ade",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "dd67207c8e03a91d",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Java/Java中的键盘录入.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Java中的键盘录入 的反向链接列表"
+            }
+          },
+          {
+            "id": "c42f9b503dda4f86",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "d469d33dff34b201",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "e013f1729272c607",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false
+    }
+  },
+  "active": "185f7a3c0e4c13c9",
+  "lastOpenFiles": [
+    "数据代理（Vue）.md",
+    "JDBC/JDBC.md",
+    "SpringBoot/Bean对象.md",
+    "Pasted image 20250408231629.png",
+    "Pasted image 20250408231323.png",
+    "Pasted image 20250408230158.png",
+    "Java/Java中的键盘录入.md",
+    "SpringBoot",
+    "Java",
+    "Pasted image 20250404174349.png",
+    "JDBC"
+  ]
+}
