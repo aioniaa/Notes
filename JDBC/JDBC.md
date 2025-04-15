@@ -71,6 +71,7 @@ connection.close();
 3. `Connection`接口还负责管理事务，`Connection`接口提供了`commit`和`rollback`方法，用于提交事务和回滚事务。  
 4. 可以创建`Statement`对象，用于执行SQL语句并与数据库进行交互。
 5. 在使用JDBc技术时，必须要先获取Connection对象，在使用完毕后，要释放资源，避免资源占用浪费及泄漏。
+------------------------------
 
 
 # 连接池
@@ -184,6 +185,8 @@ public void testResourcesHikari() throws IOException, SQLException {
 ```
 
 > ==hikari和druid软编码上有所不同，注意仔细区分二者的差别==
+
+--------------------------------------------------------
 
 # ThreadLocal
 > JDK 1.2的版本中就提供了`java.lang.ThreadLocal`，为解决多线程程序的并发问题提供了一种新的思路。使用这个工具类可以很简洁的编写出优美的多线程程序。通常用来在多线程中管理共享数据库连接、Session等
