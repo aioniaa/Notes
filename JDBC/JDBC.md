@@ -557,5 +557,15 @@ public class BaseDAO {
         // 5. 返回结果  
         return row;  
     }  
+	/**  
+	 * 通用的查询：多行多列、单行多列、单行单列  
+	 *      多行多列：List<Employee>  
+	 *      单行多列：Employee  
+	 *      单行单列：封装的是一个结果。Double、Integer......  
+	 * 封装过程：  
+	 *      1. 返回的类型：泛型，类型不确定，但是调用者知道，那么调用的时候，将此次查询的结果类型告知BaseDAO就可以了 T Employee|Double  
+	 *      2. 返回的结果：通用，List 可以存储多个结果，也可以存储一个结果 get(0)  
+	 *      3. 结果的封装：反射，要求调用者告知BaseDAO要封装对象的类对象. Class  
+	 */
 }
 ```
