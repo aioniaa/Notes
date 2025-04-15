@@ -185,13 +185,28 @@ public void testResourcesHikari() throws IOException, SQLException {
 
 > ==hikari和druid软编码上有所不同，注意仔细区分二者的差别==
 
+# ThreadLocal
+> JDK 1.2的版本中就提供了`java.lang.ThreadLocal`，为解决多线程程序的并发问题提供了一种新的思路。使用这个工具类可以很简洁的编写出优美的多线程程序。通常用来在多线程中管理共享数据库连接、Session等
+> 
+> ThreadLocal用于保存某个线程共享变量，原因是在Java中，每一个线程对象都有一个`ThreadLocalMap<ThreadLocal, Object>`，其key就是一个ThreadLocal，而Object即为该线程的共享变量。
+> 
+> 而这个map是通过ThreadLocal的set和get方法操作的。对于同一个static ThreadLocal，不同线程只能从中get，set，remove自己的变量，而不会影响其他线程的变量。
+> 	1. 在进行对象跨层传递的时候，使用TreadLocal可以避免多次传递，打破层次间的约束
+> 	2. 线程间数据隔离
+> 	3. 进行事物操作，用于存储线程事物信息
+> 	4. 数据库连接，`Session`会话管理
+> 
+> 1. `ThreadLocal对象.get`：获取ThreadLocal中当前线程共享变量的值
+> 2. `ThreadLocal对象.set`：设置ThreadLocal中当前线程共享变量的值
+> 3. `ThreadLocal对象.remove`：移除ThreadLocal中当前线程共享变量的值
+
 
 # 工具类封装
 * **问题引出：** 在使用JDBC的过程中，部分代码出现冗余的情况
 	1. 创建连接池。
 	2. 获取连接。
 	3. 连接的回收。
-
+##  V1.0
 > **JDBCUtil.java**
 ```java
 /**  
@@ -211,7 +226,7 @@ public class JDBCUtil {
             Properties properties = new Properties();  
             InputStream inputStream = JDBCUtil.class.getClassLoader().getResourceAsStream("db.properties");  
             properties.load(inputStream);  
-  
+	  
             dataSource = DruidDataSourceFactory.createDataSource(properties);  
         } catch (Exception e) {  
             throw new RuntimeException(e);  
@@ -253,3 +268,117 @@ public void testJDBCUtilConnection() {
     JDBCUtil.release(connection);  
 }
 ```
+
+## V2.0 -- 通过ThreadLocal优化后
+> **JDBCUtilV2.java**
+
+```java
+/**  
+ * JDBC工具类（V2.0）  
+ * 1. 维护一个连接池对象，维护了一个线程绑定变量的ThreadLocal对象  
+ * 2. 对外提供在ThreadLocal中获取连接的方法  
+ * 3. 对外提供回收连接的方法，在回收过程中，将要回收的连接从TreadLocal中移除  
+ * 注意：工具类仅对外提供共性的功能代码，因此方法都是静态方法！  
+ * 注意：使用TreadLocal就是为了一个线程在多次数据库操作过程中，使用的是同一个连接！  
+ */  
+public class JDBCUtilV2 {  
+    // 创建连接池引用，因为要作为项目的全局使用，因此是静态的  
+    private static DataSource dataSource;  
+    private static ThreadLocal<Connection> threadLocal = new ThreadLocal<>();  
+  
+  
+    // 在项目启动时，就创建连接池对象，赋值给dataSource  
+    static {  
+        try {  
+            Properties properties = new Properties();  
+            InputStream inputStream = JDBCUtil.class.getClassLoader().getResourceAsStream("db.properties");  
+            properties.load(inputStream);  
+  
+            dataSource = DruidDataSourceFactory.createDataSource(properties);  
+        } catch (Exception e) {  
+            throw new RuntimeException(e);  
+        }  
+    }  
+  
+    // 对外提供在ThreadLocal中获取连接的方法  
+    public static Connection getConnection() {  
+        try {  
+            // 在TreadLocal中获取Connection  
+            Connection connection = threadLocal.get();  
+            // threadLocal里没有存储Connection，也就是第一次获取  
+            if (connection == null) {  
+                // 在连接池中获取一个连接，存储在ThreadLocal里  
+                connection = dataSource.getConnection();  
+                threadLocal.set(connection);  
+            }
+            return connection;
+        } catch (SQLException e) {  
+            throw new RuntimeException(e);  
+        }  
+    }  
+  
+    // 对外提供回收连接的方法，在回收过程中，将要回收的连接从TreadLocal中移除  
+    public static void release() {  
+        try {  
+            Connection connection = threadLocal.get();  
+            if (connection != null) {  
+                // 从threadLocal中移除当前已经存在的Connection对象  
+                threadLocal.remove();  
+                // 将Connection对象归还给连接池  
+                connection.close();  
+            }  
+        } catch (SQLException e) {  
+            throw new RuntimeException(e);  
+        }  
+    }  
+}
+```
+
+> **JDBCUtilTest.java**
+
+```java
+// V1.0测试代码
+Connection connection1 = JDBCUtil.getConnection();  
+Connection connection2 = JDBCUtil.getConnection();  
+Connection connection3 = JDBCUtil.getConnection();  
+System.out.println(connection1);  
+System.out.println(connection2);  
+System.out.println(connection3);
+
+// V1.0版本多次调用测试结果 -- 调用三次，拿到的是三个不同的连接
+Apr 15, 2025 9:22:10 AM com.alibaba.druid.pool.DruidDataSource info
+INFO: {dataSource-1} inited
+com.alibaba.druid.pool.DruidStatementConnection@6f36c2f0
+com.alibaba.druid.pool.DruidStatementConnection@f58853c
+com.alibaba.druid.pool.DruidStatementConnection@1224144a
+
+// V2.0测试代码
+Connection connection1 = JDBCUtilV2.getConnection();  
+Connection connection2 = JDBCUtilV2.getConnection();  
+Connection connection3 = JDBCUtilV2.getConnection();  
+System.out.println(connection1);  
+System.out.println(connection2);  
+System.out.println(connection3);
+
+// V2.0版本多次调用测试结果 -- 调用三次，拿到的是同一个连接
+Apr 15, 2025 9:25:35 AM com.alibaba.druid.pool.DruidDataSource info
+INFO: {dataSource-1} inited
+com.alibaba.druid.pool.DruidStatementConnection@2584b82d
+com.alibaba.druid.pool.DruidStatementConnection@2584b82d
+com.alibaba.druid.pool.DruidStatementConnection@2584b82d
+```
+
+
+# DAO封装以及BaseDAO工具类
+## DAO概念
+> **DAO：Data Access Object， 数据访问对象**
+> 
+> **Java是面向对象语言，数据在Java中通常以对象的形式存在，一张表对应一个实体类，一张表的操作对应一个DAO对象**
+> 
+> **在Java操作数据库时，我们会将同一张表的增删改查操作统一起来，维护的这个类就是DAO层**
+> 
+> **DAO层只关注对数据库的操作，供业务层Service调用，将职责划分清楚**
+
+## BaseDAO概念
+> **基本上每一个数据表都应该有一个对应的DAO接口以及实现类，发现对所有表的操作（增、删、改、查）代码重复度很高，所以可以抽取公共代码，给这些DAO的实现类可以抽取一个公共的父类，复用这些增删改查的基本操作，我们称之为BaseDAO**
+
