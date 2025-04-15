@@ -382,3 +382,180 @@ com.alibaba.druid.pool.DruidStatementConnection@2584b82d
 ## BaseDAO概念
 > **基本上每一个数据表都应该有一个对应的DAO接口以及实现类，发现对所有表的操作（增、删、改、查）代码重复度很高，所以可以抽取公共代码，给这些DAO的实现类可以抽取一个公共的父类，复用这些增删改查的基本操作，我们称之为BaseDAO**
 
+## 通过Product数据库表来举例说明
+> **pojo/Product.java** - Product实体类
+```java
+public class Product {  
+    private Integer id; 
+    private String name;
+    private Double price;
+    private String categoryId;
+	// 构造函数
+    public Product() { 
+    }
+    public Product(Integer id, String name, Double price, String categoryId) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.categoryId = categoryId;
+    }
+
+	// getter、setter
+    public Integer getId() {
+        return id;
+    }
+    public void setId(Integer id) {
+        this.id = id;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public Double getPrice() {
+        return price;
+    }
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+    public String getCategoryId() {  
+        return categoryId;  
+    }  
+    public void setCategoryId(String categoryId) {  
+        this.categoryId = categoryId;  
+    }  
+
+	// toString()
+    @Override  
+    public String toString() {  
+        return "Product{" +  
+                "id=" + id +  
+                ", name='" + name + '\'' +  
+                ", price=" + price +  
+                ", categoryId='" + categoryId + '\'' +  
+                '}';  
+    }  
+}
+```
+
+> **dao/ProductDAO.java** -- product表的增删改查操作
+```java
+/**  
+ * ProductDAO这个类对应的是product这张表的增删改查的操作  
+ */  
+public interface ProductDAO {  
+    /**  
+     * 数据库对应的查询所有的操作  
+     * @return 表中所有的数据  
+     */  
+    List<Product> selectAll();  
+  
+    /**  
+     * 数据库对应的根据id查询单个商品的数据操作  
+     * @param id 主键列  
+     * @return 一个商品对象（一行数据）  
+     */  
+    Product selectById(Integer id);  
+  
+    /**  
+     * 数据库对应的新增一个商品数据  
+     * @param product ORM思想中的一个商品对象  
+     * @return 受影响的行数  
+     */  
+    int insert(Product product);  
+  
+    /**  
+     * 数据库对应的修改一个商品数据  
+     * @param product ORM思想中一个商品对象  
+     * @return 受影响的行数  
+     */  
+    int update(Product product);  
+  
+    /**  
+     * 数据库对应的删除一个商品数据  
+     * @param id 主键列  
+     * @return 受影响的行数  
+     */  
+    int delete(Integer id);  
+}
+```
+
+> **dao/impl/ProductDAOImpl.java** -- 增删改查的实现
+```java
+public class ProductDAOImpl implements ProductDAO {  
+    @Override  
+    public List<Product> selectAll() {  
+        // 1. 注册驱动  
+  
+        // 2. 获取连接  
+  
+        // 3. 预编译SQL语句  
+  
+        // 4. 为占位符赋值，执行SQL，接收返回结果  
+  
+        // 5. 处理结果  
+  
+        // 6. 回收连接  
+        return List.of();  
+    }  
+  
+    @Override  
+    public Product selectById(Integer id) {  
+        return null;  
+    }  
+  
+    @Override  
+    public int insert(Product product) {  
+        return 0;  
+    }  
+  
+    @Override  
+    public int update(Product product) {  
+        return 0;  
+    }  
+  
+    @Override  
+    public int delete(Integer id) {  
+        return 0;  
+    }  
+}
+```
+
+> **dao/impl/BaseDAO.java** -- 共性的数据库操作
+```java
+/**  
+ * 将共性的数据库操作封装在BaseDAO中  
+ */  
+public class BaseDAO {  
+    /**  
+     * 通用的增删改的方法  
+     * @param sql 调用者要执行的SQL语句  
+     * @param params SQL语句中占位符要赋值的参数  
+     * @return 受影响的行数  
+     */  
+    public int executeUpdate(String sql, Object... params) throws SQLException {  
+        // 1. 通过JDBCUtilV2获取数据库连接  
+        Connection connection = JDBCUtilV2.getConnection();  
+  
+        // 2. 预编译SQL语句  
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);  
+  
+        // 3. 为占位符赋值，执行SQL，接收返回结果  
+        if (params != null && params.length > 0) {  
+            for (int i = 0; i < params.length; i++) {  
+                // 占位符是从1开始的，参数的数组是从0开始的  
+                preparedStatement.setObject(i+1, params[i]);  
+            }  
+        }  
+        int row = preparedStatement.executeUpdate();  
+  
+        // 4. 释放资源  
+        preparedStatement.close();  
+        JDBCUtilV2.release();  
+  
+        // 5. 返回结果  
+        return row;  
+    }  
+}
+```
