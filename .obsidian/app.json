@@ -1,5 +1,6 @@
 {
   "showLineNumber": false,
   "spellcheck": false,
-  "readableLineLength": false
+  "readableLineLength": false,
+  "autoConvertHtml": false
 }
