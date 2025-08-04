@@ -15,6 +15,7 @@ function CustomString(target: Function) {
     // Uncaught TypeError: can't define property "x": Object is not extensible
 }
 
+
 @CustomString   // 此处target --> Person
 class Person {
     name: string;
@@ -26,7 +27,9 @@ class Person {
     }
 }
 
+
 const p1 = new Person("zhangsan", 18);
+
 console.log(p1.toString());
 
 // interface Person {
