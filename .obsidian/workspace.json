@@ -34,9 +34,19 @@
               "icon": "lucide-file",
               "title": "集合"
             }
+          },
+          {
+            "id": "a4360c67c54a7972",
+            "type": "leaf",
+            "state": {
+              "type": "empty",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "新标签页"
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -93,8 +103,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 303.51190185546875,
-    "collapsed": true
+    "width": 303.51190185546875
   },
   "right": {
     "id": "5aa858c4bf3bedf0",
@@ -182,11 +191,11 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "5ee08b2d8f668bb2",
+  "active": "a4360c67c54a7972",
   "lastOpenFiles": [
-    "Pasted image 20250429145910.png",
-    "JDBC/JDBC.md",
     "Java/集合.md",
+    "JDBC/JDBC.md",
+    "Pasted image 20250429145910.png",
     "README.md",
     "数据代理（Vue）.md",
     "SpringBoot/Bean对象.md",
